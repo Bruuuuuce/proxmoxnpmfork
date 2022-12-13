@@ -67,6 +67,10 @@ while [[ $# -gt 0 ]]; do
       _host_name=$2
       shift
       ;;
+    --ip)
+      _ip_address=$2
+      shift
+      ;;
     --memory)
       _memory=$2
       shift
@@ -172,7 +176,7 @@ _pct_options=(
   -hostname $_host_name
   -cores $_cpu_cores
   -memory $_memory
-  -net0 name=eth0,bridge=$_bridge,ip=dhcp
+  -net0 name=eth0,bridge=$_bridge,ip=$_ip_address
   -onboot 1
   -ostype $_os_type
   -rootfs $_rootfs,size=$_disk_size
