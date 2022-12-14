@@ -16,8 +16,8 @@ function error {
     echo -e "\e[31m[error] $1\e[39m"
   fi
 
-  if [ ! -z ${_ctid-} ]; then
-    if $(pct status $_ctid &>/dev/null); then
+  if [ -n "${_ctid-}" ]; then
+    if eval pct status $_ctid &>/dev/null; then
       if [ "$(pct status $_ctid 2>/dev/null | awk '{print $2}')" == "running" ]; then
         pct stop $_ctid &>/dev/null
       fi
@@ -95,7 +95,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check user settings or set defaults
-_ctid=${_ctid:-`pvesh get /cluster/nextid`}
+_ctid=${_ctid:-$(pvesh get /cluster/nextid)}
 _cpu_cores=${_cpu_cores:-1}
 _disk_size=${_disk_size:-2G}
 _host_name=${_host_name:-nginx-proxy-manager}
@@ -104,9 +104,10 @@ _memory=${_memory:-512}
 _swap=${_swap:-0}
 _storage=${_storage:-local-lvm}
 _storage_template=${_storage_template:-local}
+_ip_address=${_ip_address:127.0.0.1}
 
 # Test if ID is in use
-if pct status $_ctid &>/dev/null; then
+if pct status "$_ctid" &>/dev/null; then
   warn "ID '$_ctid' is already in use."
   unset _ctid
   error "Cannot use ID that is already in use."
@@ -160,7 +161,7 @@ _rootfs=${_storage}:${_disk_ref-}${_disk}
 
 # Create LXC
 info "Allocating storage for LXC container..."
-pvesm alloc $_storage $_ctid $_disk $_disk_size --format ${_disk_format:-raw} &>/dev/null \
+pvesm alloc "$_storage" $_ctid $_disk $_disk_size --format ${_disk_format:-raw} &>/dev/null \
   || error "A problem occured while allocating storage."
 
 if [ "$_storage_type" = "zfspool" ]; then
