@@ -104,7 +104,7 @@ _memory=${_memory:-512}
 _swap=${_swap:-0}
 _storage=${_storage:-local-lvm}
 _storage_template=${_storage_template:-local}
-_ip_address=${_ip_address:127.0.0.1}
+_ip_address=${_ip_address:$(127.0.0.1)}
 
 # Test if ID is in use
 if pct status "$_ctid" &>/dev/null; then
