@@ -104,7 +104,7 @@ _memory=${_memory:-512}
 _swap=${_swap:-0}
 _storage=${_storage:-local-lvm}
 _storage_template=${_storage_template:-local}
-_ip_address=${_ip_address:$(127.0.0.1)}
+#_ip_address=${_ip_address:)}
 
 # Test if ID is in use
 if pct status "$_ctid" &>/dev/null; then
@@ -141,7 +141,7 @@ mapfile -t _templates < <(pveam available -section system | sed -n "s/.*\($_os_t
   && error "No LXC template found for $_os_type-$_os_version"
 
 _template="${_templates[-1]}"
-pveam download $_storage_template $_template &>/dev/null \
+pveam download $_storage_template "$_template" &>/dev/null \
   || error "A problem occured while downloading the LXC template."
 
 # Create variables for container disk
